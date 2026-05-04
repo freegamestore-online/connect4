@@ -1,0 +1,13 @@
+{
+  "name": "connect4",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "engines": { "node": ">=22" },
+  "pnpm": { "onlyBuiltDependencies": ["esbuild"] },
+  "scripts": {
+    "dev": "pnpm --filter @connect4/web dev",
+    "build": "pnpm --filter @connect4/web build",
+    "preview": "pnpm --filter @connect4/web preview",
+    "typecheck": "pnpm --filter @connect4/web exec tsc -b"
+  }
+}
