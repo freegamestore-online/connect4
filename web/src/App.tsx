@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import { Shell } from "./components/Shell";
+import { GameShell, GameTopbar } from "@freeappstore/games";
 import { Game } from "./components/Game";
-import { Leaderboard } from "./components/Leaderboard";
 import { useLeaderboard } from "./hooks/useLeaderboard";
 import type { GamePhase } from "./types";
 
@@ -17,7 +16,7 @@ export default function App() {
   const [wins, setWins] = useState(getBestScore);
   const [lastResult, setLastResult] = useState<"win" | "loss" | "draw" | null>(null);
   const [gameKey, setGameKey] = useState(0);
-  const { topScores, recentScores, submitScore, loading } = useLeaderboard("connect4");
+  const { submitScore } = useLeaderboard("connect4");
 
   const handleScore = useCallback(
     (s: number) => {
@@ -57,47 +56,20 @@ export default function App() {
   }, [phase, start]);
 
   return (
-    <Shell
-      sidebar={
-        <nav className="flex-1 px-4 flex flex-col gap-3 py-4">
-          <div className="text-sm font-semibold" style={{ color: "var(--muted)" }}>
-            Wins
-          </div>
-          <div
-            className="text-3xl font-bold"
-            style={{ fontFamily: "Fraunces, serif" }}
-          >
-            {wins}
-          </div>
-          {phase !== "playing" && (
-            <button
-              onClick={start}
-              className="mt-4 px-4 py-2 rounded-xl font-semibold text-sm"
-              style={{ background: "var(--accent)", color: "#fff" }}
-            >
-              {phase === "menu" ? "Start" : "Play Again"}
-            </button>
-          )}
-          <div
-            className="mt-2 border-t"
-            style={{ borderColor: "var(--line)" }}
-          >
-            <div className="text-xs font-semibold px-4 pt-3" style={{ color: "var(--muted)" }}>
-              Leaderboard
-            </div>
-            <Leaderboard topScores={topScores} recentScores={recentScores} loading={loading} />
-          </div>
-        </nav>
-      }
-      dock={
-        <>
-          <div className="text-sm font-semibold">
-            Wins: {wins}
-          </div>
-        </>
+    <GameShell
+      topbar={
+        <GameTopbar
+          title="Connect 4"
+          stats={[{ label: "Wins", value: wins }]}
+          actions={
+            phase !== "playing" ? (
+              <button onClick={start}>{phase === "menu" ? "Start" : "Play Again"}</button>
+            ) : undefined
+          }
+        />
       }
     >
-      <div className="relative w-full h-full min-h-[400px]">
+      <div className="relative w-full h-full">
         {phase === "playing" ? (
           <Game key={gameKey} onScore={handleScore} onGameOver={handleGameOver} />
         ) : (
@@ -135,6 +107,6 @@ export default function App() {
           </div>
         )}
       </div>
-    </Shell>
+    </GameShell>
   );
 }
