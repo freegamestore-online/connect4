@@ -193,11 +193,6 @@ interface GameProps {
   onGameOver: () => void;
 }
 
-interface DroppingPiece {
-  col: number;
-  targetRow: number;
-  player: Cell;
-}
 
 export function Game({ onScore, onGameOver }: GameProps) {
   const sounds = useGameSounds();
@@ -205,7 +200,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
   const [winLine, setWinLine] = useState<WinLine | null>(null);
   const [gameOver, setGameOver] = useState(false);
   const [playerTurn, setPlayerTurn] = useState(true);
-  const [dropping, setDropping] = useState<DroppingPiece | null>(null);
+  
   const [hoverCol, setHoverCol] = useState<number | null>(null);
   const onScoreRef = useRef(onScore);
   const onGameOverRef = useRef(onGameOver);
@@ -226,7 +221,6 @@ export function Game({ onScore, onGameOver }: GameProps) {
   const finalizeDrop = useCallback(
     (newBoard: Board, player: Cell) => {
       setBoard(newBoard);
-      setDropping(null);
 
       const win = checkWin(newBoard, player);
       if (win) {
@@ -255,46 +249,38 @@ export function Game({ onScore, onGameOver }: GameProps) {
 
   const handleColumnClick = useCallback(
     (col: number) => {
-      if (gameOver || !playerTurn || dropping) return;
+      if (gameOver || !playerTurn) return;
 
       const result = dropPiece(board, col, PLAYER);
       if (!result) return;
 
       sounds.playMove();
-      setDropping({ col, targetRow: result.row, player: PLAYER });
-
-      // After animation, finalize
-      setTimeout(() => {
-        const over = finalizeDrop(result.newBoard, PLAYER);
-        if (!over) {
-          setPlayerTurn(false);
-        }
-      }, 300);
+      // Update board immediately — piece appears instantly
+      const over = finalizeDrop(result.newBoard, PLAYER);
+      if (!over) {
+        setPlayerTurn(false);
+      }
     },
-    [board, gameOver, playerTurn, dropping, dropPiece, finalizeDrop],
+    [board, gameOver, playerTurn, dropPiece, finalizeDrop],
   );
 
   // AI turn
   useEffect(() => {
-    if (playerTurn || gameOver || dropping) return;
+    if (playerTurn || gameOver) return;
 
     const timer = setTimeout(() => {
       const col = getAIMove(board);
       const result = dropPiece(board, col, AI);
       if (!result) return;
 
-      setDropping({ col, targetRow: result.row, player: AI });
-
-      setTimeout(() => {
-        const over = finalizeDrop(result.newBoard, AI);
-        if (!over) {
-          setPlayerTurn(true);
-        }
-      }, 300);
+      const over = finalizeDrop(result.newBoard, AI);
+      if (!over) {
+        setPlayerTurn(true);
+      }
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [playerTurn, gameOver, dropping, board, dropPiece, finalizeDrop]);
+  }, [playerTurn, gameOver, board, dropPiece, finalizeDrop]);
 
   const isWinCell = (r: number, c: number): boolean => {
     if (!winLine) return false;
@@ -343,7 +329,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
             Array.from({ length: COLS }).map((_, c) => {
               const cell = board[r]![c]!;
               const isWin = isWinCell(r, c);
-              const isHover = hoverCol === c && !gameOver && playerTurn && !dropping && getLowestRow(board, c) !== -1;
+              const isHover = hoverCol === c && !gameOver && playerTurn && getLowestRow(board, c) !== -1;
 
               let bg = "var(--paper)";
               if (cell === PLAYER) bg = "#ef4444";
@@ -359,7 +345,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
                     aspectRatio: "1",
                     borderRadius: "50%",
                     background: bg,
-                    cursor: !gameOver && playerTurn && !dropping && getLowestRow(board, c) !== -1 ? "pointer" : "default",
+                    cursor: !gameOver && playerTurn && getLowestRow(board, c) !== -1 ? "pointer" : "default",
                     boxShadow: isWin
                       ? "0 0 0 4px #fff, 0 0 16px rgba(255,255,255,0.6)"
                       : "inset 0 2px 4px rgba(0,0,0,0.2)",
