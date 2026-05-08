@@ -69,6 +69,15 @@ export default function App() {
               <GameAuth />
             </>
           }
+          rules={
+            <div>
+              <h3 style={{ fontWeight: 700 }}>Connect 4</h3>
+              <h4 style={{ fontWeight: 600 }}>Rules</h4>
+              <ul><li>Drop discs to connect 4 in a row — horizontal, vertical, or diagonal</li><li>Play against the AI</li></ul>
+              <h4 style={{ fontWeight: 600 }}>Controls</h4>
+              <ul><li>Tap a column to drop your disc</li></ul>
+            </div>
+          }
         />
       }
     >
