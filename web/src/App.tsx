@@ -12,7 +12,7 @@ function getBestScore(): number {
 }
 
 export default function App() {
-  const [phase, setPhase] = useState<GamePhase>("menu");
+  const [phase, setPhase] = useState<GamePhase>("playing");
   const [wins, setWins] = useState(getBestScore);
   const [lastResult, setLastResult] = useState<"win" | "loss" | "draw" | null>(null);
   const [gameKey, setGameKey] = useState(0);
@@ -75,17 +75,10 @@ export default function App() {
       }
     >
       <div className="relative w-full h-full">
-        {phase === "playing" ? (
-          <Game key={gameKey} onScore={handleScore} onGameOver={handleGameOver} />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-4">
-            <h1
-              className="text-4xl font-bold"
-              style={{ fontFamily: "Fraunces, serif" }}
-            >
-              Connect 4
-            </h1>
-            {phase === "over" && lastResult && (
+        <Game key={gameKey} onScore={handleScore} onGameOver={handleGameOver} />
+        {phase === "over" && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: "rgba(0,0,0,0.55)" }}>
+            {lastResult && (
               <p
                 className="text-xl font-bold"
                 style={{
@@ -96,19 +89,13 @@ export default function App() {
                 {lastResult === "win" ? "You Win!" : lastResult === "loss" ? "You Lose!" : "It's a Draw!"}
               </p>
             )}
-            <p style={{ color: "var(--muted)" }}>
-              Drop pieces to connect four in a row. You are Red.
-            </p>
             <button
               onClick={start}
               className="px-6 py-3 rounded-xl font-semibold min-h-[2.75rem]"
               style={{ background: "var(--accent)", color: "#fff" }}
             >
-              {phase === "menu" ? "Start Game" : "Play Again"}
+              Play Again
             </button>
-            <p className="text-xs" style={{ color: "var(--muted)" }}>
-              Press Space or Enter to start
-            </p>
           </div>
         )}
       </div>
