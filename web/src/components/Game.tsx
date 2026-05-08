@@ -218,6 +218,9 @@ export function Game({ onScore, onGameOver }: GameProps) {
     [],
   );
 
+  const soundsRef = useRef(sounds);
+  soundsRef.current = sounds;
+
   const finalizeDrop = useCallback(
     (newBoard: Board, player: Cell) => {
       setBoard(newBoard);
@@ -227,10 +230,10 @@ export function Game({ onScore, onGameOver }: GameProps) {
         setWinLine(win);
         setGameOver(true);
         if (player === PLAYER) {
-          sounds.playScore();
+          soundsRef.current.playScore();
           onScoreRef.current(1);
         } else {
-          sounds.playError();
+          soundsRef.current.playError();
           onScoreRef.current(-1);
         }
         onGameOverRef.current();
@@ -307,7 +310,8 @@ export function Game({ onScore, onGameOver }: GameProps) {
       <div
         style={{
           position: "relative",
-          width: "min(95vw, 500px)",
+          width: "min(90vw, 500px)",
+          maxHeight: "70vh",
           aspectRatio: `${COLS}/${ROWS}`,
         }}
       >
@@ -316,6 +320,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+            gridTemplateRows: `repeat(${ROWS}, 1fr)`,
             gap: `${gap}px`,
             background: "#2563eb",
             borderRadius: "1.25rem",
