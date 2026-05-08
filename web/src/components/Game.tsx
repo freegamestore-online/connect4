@@ -301,11 +301,8 @@ export function Game({ onScore, onGameOver }: GameProps) {
     return winLine.cells.some(([wr, wc]) => wr === r && wc === c);
   };
 
-  const cellSize = 64;
-  const gap = 6;
-  const padding = 12;
-  const boardWidth = COLS * cellSize + (COLS - 1) * gap + padding * 2;
-  const boardHeight = ROWS * cellSize + (ROWS - 1) * gap + padding * 2;
+  const gap = 4;
+  const padding = 8;
 
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 select-none">
@@ -324,33 +321,15 @@ export function Game({ onScore, onGameOver }: GameProps) {
       <div
         style={{
           position: "relative",
-          width: boardWidth,
-          maxWidth: "95vw",
+          width: "min(95vw, 500px)",
+          aspectRatio: `${COLS}/${ROWS}`,
         }}
       >
-        {/* Dropping piece animation */}
-        {dropping && (
-          <div
-            style={{
-              position: "absolute",
-              left: padding + dropping.col * (cellSize + gap),
-              top: padding + dropping.targetRow * (cellSize + gap),
-              width: cellSize,
-              height: cellSize,
-              borderRadius: "50%",
-              background: dropping.player === PLAYER ? "#ef4444" : "#eab308",
-              zIndex: 20,
-              animation: "drop 0.3s ease-in forwards",
-              transformOrigin: "center top",
-            }}
-          />
-        )}
-
         {/* Board */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: `repeat(${COLS}, ${cellSize}px)`,
+            gridTemplateColumns: `repeat(${COLS}, 1fr)`,
             gap: `${gap}px`,
             background: "#2563eb",
             borderRadius: "1.25rem",
@@ -377,8 +356,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
                   onMouseEnter={() => setHoverCol(c)}
                   onMouseLeave={() => setHoverCol(null)}
                   style={{
-                    width: cellSize,
-                    height: cellSize,
+                    aspectRatio: "1",
                     borderRadius: "50%",
                     background: bg,
                     cursor: !gameOver && playerTurn && !dropping && getLowestRow(board, c) !== -1 ? "pointer" : "default",
@@ -403,7 +381,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
       <style>{`
         @keyframes drop {
           from {
-            transform: translateY(-${boardHeight}px);
+            transform: translateY(-100%);
             opacity: 0.8;
           }
           to {
