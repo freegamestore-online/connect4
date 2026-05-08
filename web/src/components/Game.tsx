@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useGameSounds } from "@freegamestore/games";
 import type { Cell, Board, WinLine } from "../types";
 
 const ROWS = 6;
@@ -199,6 +200,7 @@ interface DroppingPiece {
 }
 
 export function Game({ onScore, onGameOver }: GameProps) {
+  const sounds = useGameSounds();
   const [board, setBoard] = useState<Board>(createBoard);
   const [winLine, setWinLine] = useState<WinLine | null>(null);
   const [gameOver, setGameOver] = useState(false);
@@ -231,8 +233,10 @@ export function Game({ onScore, onGameOver }: GameProps) {
         setWinLine(win);
         setGameOver(true);
         if (player === PLAYER) {
+          sounds.playScore();
           onScoreRef.current(1);
         } else {
+          sounds.playError();
           onScoreRef.current(-1);
         }
         onGameOverRef.current();
@@ -256,6 +260,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
       const result = dropPiece(board, col, PLAYER);
       if (!result) return;
 
+      sounds.playMove();
       setDropping({ col, targetRow: result.row, player: PLAYER });
 
       // After animation, finalize
