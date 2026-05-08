@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { GameShell, GameTopbar } from "@freegamestore/games";
+import { GameShell, GameTopbar, GameAuth } from "@freegamestore/games";
 import { Game } from "./components/Game";
 import { useLeaderboard } from "./hooks/useLeaderboard";
 import type { GamePhase } from "./types";
@@ -62,9 +62,12 @@ export default function App() {
           title="Connect 4"
           stats={[{ label: "Wins", value: wins }]}
           actions={
-            phase !== "playing" ? (
-              <button onClick={start}>{phase === "menu" ? "Start" : "Play Again"}</button>
-            ) : undefined
+            <>
+              {phase !== "playing" && (
+                <button onClick={start}>{phase === "menu" ? "Start" : "Play Again"}</button>
+              )}
+              <GameAuth />
+            </>
           }
         />
       }
