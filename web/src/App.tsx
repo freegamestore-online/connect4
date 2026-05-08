@@ -61,14 +61,7 @@ export default function App() {
         <GameTopbar
           title="Connect 4"
           stats={[{ label: "Wins", value: wins }]}
-          actions={
-            <>
-              {phase !== "playing" && (
-                <button className="min-h-[2.75rem] min-w-[2.75rem]" onClick={start}>{phase === "menu" ? "Start" : "Play Again"}</button>
-              )}
-              <GameAuth />
-            </>
-          }
+          actions={<GameAuth />}
           rules={
             <div>
               <h3 style={{ fontWeight: 700 }}>Connect 4</h3>
