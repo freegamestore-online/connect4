@@ -303,7 +303,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
               : "AI Wins!"
             : "Draw!"
           : playerTurn
-            ? "Your turn (Red)"
+            ? "Your turn"
             : "AI thinking..."}
       </div>
 
@@ -322,7 +322,7 @@ export function Game({ onScore, onGameOver }: GameProps) {
             gridTemplateColumns: `repeat(${COLS}, 1fr)`,
             gridTemplateRows: `repeat(${ROWS}, 1fr)`,
             gap: `${gap}px`,
-            background: "#2563eb",
+            background: "var(--accent)",
             borderRadius: "1.25rem",
             padding: `${padding}px`,
             position: "relative",
@@ -336,9 +336,11 @@ export function Game({ onScore, onGameOver }: GameProps) {
               const isWin = isWinCell(r, c);
               const isHover = hoverCol === c && !gameOver && playerTurn && getLowestRow(board, c) !== -1;
 
-              let bg = "var(--paper)";
-              if (cell === PLAYER) bg = "#ef4444";
-              else if (cell === AI) bg = "#eab308";
+              // Empty holes show the board through; hover previews a ghost of the player disc
+              let bg = "transparent";
+              if (cell === PLAYER) bg = "var(--ink)";
+              else if (cell === AI) bg = "var(--paper)";
+              else if (isHover) bg = "var(--ink)";
 
               return (
                 <div

@@ -83,6 +83,24 @@ describe("FreeGameStore compliance", () => {
     });
   });
 
+  describe("no trademarked game name in visible text", () => {
+    const visibleSources = [
+      "index.html",
+      "vite.config.ts",
+      "src/App.tsx",
+      "src/components/Game.tsx",
+      "src/components/Shell.tsx",
+    ];
+
+    it.each(visibleSources)("%s has no 'Connect 4' or 'Connect Four'", (rel) => {
+      expect(read(rel)).not.toMatch(/connect (4|four)/i);
+    });
+
+    it("uses the generic name 'Four in a Row' in the document title", () => {
+      expect(read("index.html")).toContain("<title>Four in a Row");
+    });
+  });
+
   describe("no banned content", () => {
     const appTsx = read("src/App.tsx");
 
