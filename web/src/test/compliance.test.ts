@@ -89,7 +89,7 @@ describe("FreeGameStore compliance", () => {
       "vite.config.ts",
       "src/App.tsx",
       "src/components/Game.tsx",
-      "src/components/Shell.tsx",
+      "src/logic.ts",
     ];
 
     it.each(visibleSources)("%s has no 'Connect 4' or 'Connect Four'", (rel) => {
