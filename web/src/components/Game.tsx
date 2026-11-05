@@ -114,8 +114,8 @@ export function Game({ onScore, onGameOver }: GameProps) {
       <div
         style={{
           position: "relative",
-          width: "min(90vw, 500px)",
-          maxHeight: "70vh",
+          // Keep the 7:6 board within 70vh on short (landscape) screens
+          width: "min(90vw, 500px, calc(70vh * 7 / 6))",
           aspectRatio: `${COLS}/${ROWS}`,
         }}
       >
@@ -138,7 +138,8 @@ export function Game({ onScore, onGameOver }: GameProps) {
             Array.from({ length: COLS }).map((_, c) => {
               const cell = board[r]![c]!;
               const isWin = isWinCell(r, c);
-              const isHover = hoverCol === c && !gameOver && playerTurn && getLowestRow(board, c) !== -1;
+              // Preview only the cell the disc would land in
+              const isHover = hoverCol === c && !gameOver && playerTurn && getLowestRow(board, c) === r;
 
               // Empty holes show the board through; hover previews a ghost of the player disc
               let bg = "transparent";
@@ -150,8 +151,9 @@ export function Game({ onScore, onGameOver }: GameProps) {
                 <div
                   key={`${r}-${c}`}
                   onClick={() => handleColumnClick(c)}
-                  onMouseEnter={() => setHoverCol(c)}
-                  onMouseLeave={() => setHoverCol(null)}
+                  // Mouse only: emulated hover from a tap would stick on touch screens
+                  onPointerEnter={(e) => e.pointerType === "mouse" && setHoverCol(c)}
+                  onPointerLeave={() => setHoverCol(null)}
                   style={{
                     aspectRatio: "1",
                     borderRadius: "50%",

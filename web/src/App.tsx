@@ -61,6 +61,7 @@ export default function App() {
         <GameTopbar
           title="Four in a Row"
           stats={[{ label: "Wins", value: wins }]}
+          onRestart={start}
           actions={<GameAuth />}
           rules={
             <div>
@@ -77,7 +78,11 @@ export default function App() {
       <div className="relative w-full h-full">
         <Game key={gameKey} onScore={handleScore} onGameOver={handleGameOver} />
         {phase === "over" && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: "rgba(0,0,0,0.55)" }}>
+          // Fades in after a pause so the winning line stays visible first
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center gap-4"
+            style={{ background: "rgba(0,0,0,0.55)", animation: "overlay-in 0.3s ease-out 1.5s both" }}
+          >
             {lastResult && (
               <p
                 className="text-xl font-bold"
